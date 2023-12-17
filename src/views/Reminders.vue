@@ -82,57 +82,68 @@ export default {
 </script>
 
 <script setup>
-import { reactive } from "vue";
-import { useVuelidate } from "@vuelidate/core";
-import { required } from "@vuelidate/validators";
-import { ref } from "vue";
-import Datepicker from '@vuepic/vue-datepicker';
-import '@vuepic/vue-datepicker/dist/main.css';
+  import { reactive } from "vue";
+  import { useVuelidate } from "@vuelidate/core";
+  import { required } from "@vuelidate/validators";
+  import { ref } from "vue";
+  import Datepicker from '@vuepic/vue-datepicker';
+  import '@vuepic/vue-datepicker/dist/main.css';
+  import { useRemindersStore } from "@/stores/reminders";
 
-let date = ref(new Date());
-const format = (date) => {
-  const day = date.getDate();
-  const month = date.getMonth() + 1;
-  const year = date.getFullYear();
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
+  let date = ref(new Date());
+  const format = (date) => {
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
 
-  return `${day}/${month}/${year}, ${hours}:${minutes}`;
-}
+    return `${day}/${month}/${year}, ${hours}:${minutes}`;
+  }
 
-const initialState = {
-  medicine: "",
-  message: "",
-  notificationTime: "",
-};
+  const remindersStore = useRemindersStore();
 
-const state = reactive({
-  ...initialState,
-});
+  onMounted(() => {
+    //getReminders();
+  });
 
-const rules = {
-  medicine: { required },
-  message: { required },
-  notificationTime: { required },
-};
+  function getReminders () {
+    remindersStore.getAll();
+  }
 
-const v$ = useVuelidate(rules, state);
+  const initialState = {
+    medicine: "",
+    message: "",
+    notificationTime: "",
+  };
 
-async function submit() {
-  const result = await v$.value.$validate();
-  const request = {};
-  if (result) {
-    for (const key of Object.keys(initialState)) {
-      request[key] = state[key];
+  const state = reactive({
+    ...initialState,
+  });
+
+  const rules = {
+    medicine: { required },
+    message: { required },
+    notificationTime: { required },
+  };
+
+  const v$ = useVuelidate(rules, state);
+
+  async function submit() {
+    const result = await v$.value.$validate();
+    const request = {};
+    if (result) {
+      for (const key of Object.keys(initialState)) {
+        request[key] = state[key];
+      }
     }
   }
-}
 
-function clear() {
-  v$.value.$reset();
-  for (const [key, value] of Object.entries(initialState)) {
-    state[key] = value;
+  function clear() {
+    v$.value.$reset();
+    for (const [key, value] of Object.entries(initialState)) {
+      state[key] = value;
+    }
+    date = ref(new Date());
   }
-  date = ref(new Date());
-}
 </script>

@@ -77,57 +77,57 @@
 </template>
 
 <script>
-export default {
-  inheritAttrs: false,
-};
+  export default {
+    inheritAttrs: false,
+  };
 </script>
 
 <script setup>
-import { reactive } from "vue";
-import { useVuelidate } from "@vuelidate/core";
-import { required } from "@vuelidate/validators";
+  import { reactive } from "vue";
+  import { useVuelidate } from "@vuelidate/core";
+  import { required } from "@vuelidate/validators";
 
-const initialState = {
-  smoker: "",
-  drinker: "",
-  breakfast: "",
-  lunch: "",
-  coldMd: "",
-  prescribed: "",
-  allergy: "",
-};
+  const initialState = {
+    smoker: "",
+    drinker: "",
+    breakfast: "",
+    lunch: "",
+    coldMd: "",
+    prescribed: "",
+    allergy: "",
+  };
 
-const state = reactive({
-  ...initialState,
-});
+  const state = reactive({
+    ...initialState,
+  });
 
-const rules = {
-  smoker: { required },
-  drinker: { required },
-  breakfast: { required },
-  lunch: { required },
-  coldMd: { required },
-  prescribed: { required },
-  allergy: { required },
-};
+  const rules = {
+    smoker: { required },
+    drinker: { required },
+    breakfast: { required },
+    lunch: { required },
+    coldMd: { required },
+    prescribed: { required },
+    allergy: { required },
+  };
 
-const v$ = useVuelidate(rules, state);
+  const v$ = useVuelidate(rules, state);
 
-async function submit() {
-  const result = await v$.value.$validate();
-  const request = {};
-  if (result) {
-    for (const key of Object.keys(initialState)) {
-      request[key] = state[key];
+  async function submit() {
+    const result = await v$.value.$validate();
+    const request = {};
+    if (result) {
+      for (const key of Object.keys(initialState)) {
+        request[key] = state[key];
+      }
     }
   }
-}
 
-function clear() {
-  v$.value.$reset();
+  function clear() {
+    v$.value.$reset();
 
-  for (const [key, value] of Object.entries(initialState)) {
-    state[key] = value;
+    for (const [key, value] of Object.entries(initialState)) {
+      state[key] = value;
+    }
   }
-}
 </script>

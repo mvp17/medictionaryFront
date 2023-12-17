@@ -21,3 +21,20 @@ export default {
   inheritAttrs: false,
 };
 </script>
+
+<script setup>
+  import { useAlarmsStore } from "@/stores/alarms";
+  import { computed } from "@vue/reactivity";
+  import { onMounted } from "vue";
+
+  const alarmsStore = useAlarmsStore();
+  const alarms = computed(() => alarmsStore.alarms);
+
+  onMounted(() => {
+    //getAlarms();
+  });
+
+  function getAlarms () {
+    alarmsStore.getAll();
+  }
+</script>
