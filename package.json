@@ -1,0 +1,39 @@
+{
+  "name": "medictionaryfront",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test:unit": "vitest",
+    "test:e2e": "start-server-and-test preview http://localhost:4173 'cypress run --e2e'",
+    "test:e2e:dev": "start-server-and-test 'vite dev --port 4173' http://localhost:4173 'cypress open --e2e'"
+  },
+  "dependencies": {
+    "@mdi/font": "^7.3.67",
+    "@popperjs/core": "^2.11.8",
+    "@vuelidate/core": "^2.0.3",
+    "@vuelidate/validators": "^2.0.4",
+    "@vuepic/vue-datepicker": "^7.4.0",
+    "core-js": "^3.34.0",
+    "pinia": "^2.1.7",
+    "roboto-fontface": "^0.10.0",
+    "sass": "^1.69.5",
+    "vue": "^3.3.11",
+    "vue-router": "^4.2.5",
+    "vuetify": "^3.4.7",
+    "webfontloader": "^1.6.28"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.5.2",
+    "@vue/test-utils": "^2.4.3",
+    "cypress": "^13.6.1",
+    "jsdom": "^23.0.1",
+    "start-server-and-test": "^2.0.3",
+    "vite": "^5.0.10",
+    "vite-plugin-vuetify": "^2.0.1",
+    "vitest": "^1.0.4"
+  }
+}
