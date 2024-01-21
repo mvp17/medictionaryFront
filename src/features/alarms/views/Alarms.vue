@@ -23,7 +23,7 @@ export default {
 </script>
 
 <script setup>
-  import { useAlarmsStore } from "@/stores/alarms";
+  import { useAlarmsStore } from "../stores/alarms";
   import { computed } from "@vue/reactivity";
   import { onMounted } from "vue";
 
@@ -38,3 +38,4 @@ export default {
     alarmsStore.getAll();
   }
 </script>
+@/features/alarms/stores/alarms

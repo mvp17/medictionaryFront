@@ -142,10 +142,11 @@ export default {
 
 <script setup>
   import { useRoute } from "vue-router";
-  import { useMedicinesStore } from "@/stores/medicines";
+  import { useMedicinesStore } from "../stores/medicines";
 
   const medicinesStore = useMedicinesStore();
   
   const currentRoute = useRoute();
   const detailedMedicineId = currentRoute.query.medicineId;
 </script>
+@/features/medicines/stores/medicines

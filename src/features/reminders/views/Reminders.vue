@@ -85,10 +85,10 @@ export default {
   import { reactive } from "vue";
   import { useVuelidate } from "@vuelidate/core";
   import { required } from "@vuelidate/validators";
-  import { ref } from "vue";
+  import { ref, onMounted } from "vue";
   import Datepicker from '@vuepic/vue-datepicker';
   import '@vuepic/vue-datepicker/dist/main.css';
-  import { useRemindersStore } from "@/stores/reminders";
+  import { useRemindersStore } from "../stores/reminders";
 
   let date = ref(new Date());
   const format = (date) => {
@@ -147,3 +147,4 @@ export default {
     date = ref(new Date());
   }
 </script>
+@/features/reminders/stores/reminders

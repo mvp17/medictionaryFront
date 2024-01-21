@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import http from "../http-common";
+import http from "../../../http-common";
 
 export const useAlarmsStore = defineStore('alarms', {
   state: () => ({

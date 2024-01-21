@@ -19,7 +19,7 @@
   </template>
   
   <script>
-  import { routes } from "../router";
+  import { routes } from "@/plugins/router";
   export default {
     name: "Header",
     data: () => ({
@@ -28,4 +28,4 @@
     }),
   };
   </script>
-  
+  ../router/router

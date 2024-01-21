@@ -34,7 +34,7 @@
 <script setup>
   import { useRouter } from "vue-router";
   import { ref } from "vue";
-  import { useMedicinesStore } from "@/stores/medicines";
+  import { useMedicinesStore } from "../stores/medicines";
 
   const medicinesStore = useMedicinesStore();
 
@@ -118,3 +118,4 @@
     background-color: tomato;
   }
 </style>
+@/features/medicines/stores/medicines
