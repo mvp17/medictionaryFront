@@ -1,13 +1,20 @@
 import { defineStore } from 'pinia';
-import http from "../../../http-common";
+import http from '@/http-common';
+import { useUserStore } from '@/modules/users/stores/userStore';
 
 export const useRemindersStore = defineStore('reminders', {
   state: () => ({
-    /** @type {{ id: number, medicine: string, message: string, notificationTime: string, totalDailyDosage: number }[]} */
+    /** @type {{ uuid: string, medicine: string, message: string, notificationTime: string }[]} */
     reminders: [],
   }),
   getters: {
     getAll: async (state) => {
+      http.interceptors.request.use(async (request) => {
+        const userStore = useUserStore();
+        const token = userStore.getUser.token;
+        if (token !== "") request.headers.Authorization = `Bearer ${token}`;
+        return request;
+      });
       const apiResponse = await http.get("/reminders");
       state.reminders = apiResponse.data;
     },
@@ -16,21 +23,22 @@ export const useRemindersStore = defineStore('reminders', {
     },
   },
   actions: {
-    async addReminder(newReminder) {
-      const apiResponse = await http.post("/createReminder", newReminder);
+    async addReminder(/** @type {{ medicine: string, message: string, notification_time: string }} */ newReminder) {
+      const apiResponse = await http.post("/reminders", newReminder);
       this.reminders = [...this.reminders, apiResponse.data];
     },
-    async updateReminder(id, currentReminder) {
-      const apiResponse = await http.put(`/updateReminder/${id}`, currentReminder);
-      let remindersState = this.reminders.filter((reminder) => reminder.id !== id);
+    async updateReminder(/** @type { string } */ uuid, 
+                         /** @type {{ medicine: string, message: string, notification_time: string }} */ currentReminder) {
+      const apiResponse = await http.put(`/reminders/${uuid}`, currentReminder);
+      let remindersState = this.reminders.filter((reminder) => reminder.uuid !== uuid);
       remindersState.push(apiResponse.data);
       this.reminders = remindersState;
     },
-    /*
-    async removePlayer(id) {
-      await http.delete(`/players/${id}`);
-      this.players = this.players.filter((player) => player.id !== id);
+    
+    async removeReminder(/** @type { string } */ uuid) {
+      await http.delete(`/reminders/${uuid}`);
+      this.reminders = this.reminders.filter((reminder) => reminder.uuid !== uuid);
     },
-    */
+    
   },
 });

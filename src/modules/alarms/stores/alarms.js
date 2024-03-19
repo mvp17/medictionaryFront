@@ -8,6 +8,11 @@ export const useAlarmsStore = defineStore('alarms', {
   }),
   getters: {
     getAll: async (state) => {
+      http.interceptors.request.use(async (request) => {
+        const token = useUserStore.getUser.token;
+        if (token !== "") request.headers.Authorization = `Bearer ${token}`;
+        return request;
+      });
       const apiResponse = await http.get("/alarms");
       state.alarms = apiResponse.data;
     },

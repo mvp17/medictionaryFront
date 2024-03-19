@@ -23,7 +23,7 @@
           @blur="v$.message.$touch"
         ></v-text-field>
 
-        <Datepicker v-model="date" :format="format"/>
+        <Datepicker v-model="state.notification_time" :format="format"/>
         <div style="margin-top: 15px;">
           <v-btn color="success" class="me-4" @click="submit"> submit </v-btn>
           <v-btn color="error" @click="clear"> clear </v-btn>
@@ -33,56 +33,30 @@
     <v-col>
       <v-data-table
         :headers="headers"
-        :items="remindersList"
+        :items="reminders"
         class="elevation-1"
-        item-key="medicine"
+        item-key="id"
         items-per-page="5"
-      ></v-data-table>
+      >
+        <template v-slot:headers>
+          <tr>
+            <th v-for="header in headers" :key="header.text">
+              {{ header.text }}
+            </th>
+          </tr>
+        </template>
+        <template v-slot:[`item.action`]="{ item }">
+          <v-btn @click="editReminder(item)" color="warning"> edit </v-btn>
+          <v-btn @click="deleteReminder(item.uuid)" color="error"> delete </v-btn>
+        </template>
+      </v-data-table>
     </v-col>
   </v-row>
 </template>
 
-<script>
-export default {
-  inheritAttrs: false,
-  data() {
-    return {
-      remindersList: [
-        {
-          medicine: "para",
-          message: "careful",
-          notificationTime: "17:00",
-        },
-        {
-          medicine: "para",
-          message: "careful",
-          notificationTime: "17:00",
-        },
-      ],
-      headers: [
-        {
-          title: "Medicine",
-          align: "center",
-          key: "medicine",
-        },
-        {
-          title: "Message",
-          align: "center",
-          key: "message",
-        },
-        {
-          title: "Notification Time",
-          align: "center",
-          key: "notificationTime",
-        },
-      ],
-    };
-  },
-};
-</script>
 
 <script setup>
-  import { reactive } from "vue";
+  import { computed, reactive } from "vue";
   import { useVuelidate } from "@vuelidate/core";
   import { required } from "@vuelidate/validators";
   import { ref, onMounted } from "vue";
@@ -90,31 +64,28 @@ export default {
   import '@vuepic/vue-datepicker/dist/main.css';
   import { useRemindersStore } from "../stores/reminders";
 
-  let date = ref(new Date());
-  const format = (date) => {
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
+  const format = (/** @type { Date } */ date) => {
+    const day     = String(date.getDate()).padStart(2, '0');
+    const month   = String(date.getMonth() + 1).padStart(2, '0');
+    const year    = date.getFullYear();
+    const hours   = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
 
     return `${day}/${month}/${year}, ${hours}:${minutes}`;
   }
-
   const remindersStore = useRemindersStore();
-
-  onMounted(() => {
-    //getReminders();
-  });
-
-  function getReminders () {
-    remindersStore.getAll();
-  }
-
+  const reminders = computed(() => remindersStore.reminders);
+  const headers = [
+    //{ text: 'Id',                value: 'uuid'},
+    { text: 'Medicine',          value: 'medicine'},
+    { text: 'Message',           value: 'message'},
+    { text: 'Notification Time', value: 'notification_time'},
+    { text: 'Actions',           value: 'action' },
+  ];
   const initialState = {
     medicine: "",
     message: "",
-    notificationTime: "",
+    notification_time: ref(new Date()),
   };
 
   const state = reactive({
@@ -122,28 +93,71 @@ export default {
   });
 
   const rules = {
-    medicine: { required },
-    message: { required },
-    notificationTime: { required },
+    medicine:         { required },
+    message:          { required },
+    notification_time: { required },
   };
 
   const v$ = useVuelidate(rules, state);
+  let reminderId = "";
+
+  onMounted(async () => {
+    await remindersStore.getAll;
+  });
 
   async function submit() {
     const result = await v$.value.$validate();
-    const request = {};
+    const request = {
+      medicine: "",
+      message: "",
+      notification_time: ""
+    };
+
     if (result) {
-      for (const key of Object.keys(initialState)) {
-        request[key] = state[key];
+      request.medicine = state.medicine;
+      request.message = state.message;
+      request.notification_time = state.notification_time.toLocaleString();
+
+      
+      if (reminderId !== "") {
+        await remindersStore.updateReminder(reminderId, request);
+        reminderId = "";
       }
+      else
+        await remindersStore.addReminder(request);
+      
+      await remindersStore.getAll;
+      clear();
     }
+    else alert("Validation form failed!");
+  }
+
+  async function editReminder(/** @type {{ uuid: string, 
+                                           medicine: string, 
+                                           message: string, 
+                                           notification_time: string 
+                                        }} */ 
+                                        reminder) {
+    state.medicine = reminder.medicine;
+    state.message  = reminder.message;
+
+    const [datePart, timePart] = reminder.notification_time.split(', ');
+    const [day, month, year] = datePart.split('/');
+    const [hours, minutes, seconds] = timePart.split(':');
+    const dateObject = new Date(year, month - 1, day, hours, minutes, seconds);    
+    
+    state.notification_time = dateObject;
+    reminderId              = reminder.uuid
+  }
+
+  async function deleteReminder(/** @type { string } */ uuid) {
+    await remindersStore.removeReminder(uuid);
   }
 
   function clear() {
     v$.value.$reset();
-    for (const [key, value] of Object.entries(initialState)) {
-      state[key] = value;
-    }
-    date = ref(new Date());
+    state.medicine          = "";
+    state.message           = "";
+    state.notification_time = ref(new Date());
   }
 </script>

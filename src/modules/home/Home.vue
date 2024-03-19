@@ -76,11 +76,6 @@
   </form>
 </template>
 
-<script>
-  export default {
-    inheritAttrs: false,
-  };
-</script>
 
 <script setup>
   import { reactive } from "vue";
@@ -102,32 +97,50 @@
   });
 
   const rules = {
-    smoker: { required },
-    drinker: { required },
-    breakfast: { required },
-    lunch: { required },
-    coldMd: { required },
+    smoker:     { required },
+    drinker:    { required },
+    breakfast:  { required },
+    lunch:      { required },
+    coldMd:     { required },
     prescribed: { required },
-    allergy: { required },
+    allergy:    { required },
   };
 
   const v$ = useVuelidate(rules, state);
 
   async function submit() {
     const result = await v$.value.$validate();
-    const request = {};
+    const request = { 
+      smoker: "", 
+      drinker: "", 
+      breakfast: "", 
+      lunch: "", 
+      coldMd: "", 
+      prescribed: "", 
+      allergy: "" 
+    };
+
     if (result) {
-      for (const key of Object.keys(initialState)) {
-        request[key] = state[key];
-      }
+      request.allergy    = state.allergy;
+      request.breakfast  = state.breakfast;
+      request.coldMd     = state.coldMd;
+      request.drinker    = state.drinker;
+      request.lunch      = state.lunch;
+      request.prescribed = state.prescribed;
+      request.smoker     = state.smoker;
+
+      clear();
     }
   }
 
   function clear() {
     v$.value.$reset();
-
-    for (const [key, value] of Object.entries(initialState)) {
-      state[key] = value;
-    }
+    state.allergy    = "";
+    state.breakfast  = "";
+    state.coldMd     = "";
+    state.drinker    = "";
+    state.lunch      = "";
+    state.prescribed = "";
+    state.smoker     = "";
   }
 </script>

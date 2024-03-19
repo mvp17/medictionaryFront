@@ -1,36 +1,48 @@
+import { authGuard } from "./guards";
+
 export const routes = [
     {
-      path: "/home",
+      path: "/",
       name: "Home",
       icon: "mdi-home",
-      component: () => import("../features/home/Home.vue"),
+      component: () => import("../../modules/home/Home.vue"),
+      beforeEnter: [authGuard]
+    },
+    {
+      path: '/login',
+      name: 'Login',
+      component: () => import("../../modules/users/views/signIn.vue")
+    },
+    {
+      path: '/register',
+      name: 'Register',
+      component: () => import("../../modules/users/views/signUp.vue")
     },
     {
       path: "/search-medicine",
       name: "Search medicine",
       icon: "mdi-magnify",
-      component: () => import("../features/medicines/views/SearchMedicine.vue"),
+      component: () => import("../../modules/medicines/views/SearchMedicine.vue"),
       beforeEnter: [authGuard]
     },
     {
       path: "/alarms",
       name: "Alarms",
       icon: "mdi-alarm",
-      component: () => import("../features/alarms/views/Alarms.vue"),
+      component: () => import("../../modules/alarms/views/Alarms.vue"),
       beforeEnter: [authGuard]
     },
     {
       path: "/reminders",
       name: "Reminders",
       icon: "mdi-reminder",
-      component: () => import("../features/reminders/views/Reminders.vue"),
+      component: () => import("../../modules/reminders/views/Reminders.vue"),
       beforeEnter: [authGuard]
     },
-  
     {
       path: "/detailed-medicine",
       name: "Detail medicine",
-      component: () => import("../features/medicines/views/DetailedMedicine.vue"),
+      component: () => import("../../modules/medicines/views/DetailedMedicine.vue"),
       beforeEnter: [authGuard]
     },
 ];

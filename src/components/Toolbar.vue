@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-app-bar app color="orange" dark>
-      <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
+      <!--<v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>-->
       <v-toolbar-title>Medictionary</v-toolbar-title>
       <v-spacer></v-spacer>
       <p v-for="item in items">
@@ -19,7 +19,7 @@
 </template>
   
 <script>
-  import { routes } from "@/plugins/router";
+  import { routes } from "@/plugins/router/routes";
   export default {
     name: "Header",
     data: () => ({
