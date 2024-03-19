@@ -147,4 +147,3 @@ export default {
     date = ref(new Date());
   }
 </script>
-@/features/reminders/stores/reminders

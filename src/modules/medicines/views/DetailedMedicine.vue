@@ -149,4 +149,3 @@ export default {
   const currentRoute = useRoute();
   const detailedMedicineId = currentRoute.query.medicineId;
 </script>
-@/features/medicines/stores/medicines

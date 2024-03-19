@@ -38,4 +38,3 @@ export default {
     alarmsStore.getAll();
   }
 </script>
-@/features/alarms/stores/alarms

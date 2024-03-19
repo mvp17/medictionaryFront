@@ -118,4 +118,3 @@
     background-color: tomato;
   }
 </style>
-@/features/medicines/stores/medicines
