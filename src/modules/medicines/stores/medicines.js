@@ -1,15 +1,22 @@
 import { defineStore } from 'pinia';
 import http from "../../../http-common";
+import { useUserStore } from '@/modules/users/stores/userStore';
 
 export const useMedicinesStore = defineStore('medicines', {
   state: () => ({
-    /** @type {{ id: number, name: string, description: string, sideEffects: string, totalDailyDosage: number }[]} */
+    /** @type {{ uuid: number, 
+     *           name: string, 
+     *           description: string, 
+     *           sideEffects: string, 
+     *           totalDailyDosage: number }[]} 
+    */
     medicines: [],
   }),
   getters: {
     getAll: async (state) => {
       http.interceptors.request.use(async (request) => {
-        const token = useUserStore.getUser.token;
+        const userStore = useUserStore();
+        const token = userStore.getUser.token;
         if (token !== "") request.headers.Authorization = `Bearer ${token}`;
         return request;
       });
@@ -17,25 +24,35 @@ export const useMedicinesStore = defineStore('medicines', {
       state.medicines = apiResponse.data;
     },
     getById: (state) => {
-      return (id) => state.medicines.find((medicine) => medicine.id === id);
+      return (uuid) => state.medicines.find((medicine) => medicine.uuid === uuid);
     },
   },
   actions: {
-    async addMedicine(newMedicine) {
-      const apiResponse = await http.post("/createMedicine", newMedicine);
+    async addMedicine(/** @type {{ name: string, 
+                                   description: string, 
+                                   side_effects: string,
+                                   total_daily_dosage: number
+                                }} */
+                              newMedicine) {
+      const apiResponse = await http.post("/medicines", newMedicine);
       this.medicines = [...this.medicines, apiResponse.data];
     },
-    async updateMedicine(id, currentMedicine) {
-      const apiResponse = await http.put(`/updateMedicine/${id}`, currentMedicine);
-      let medicinesState = this.medicines.filter((medicine) => medicine.id !== id);
+    async updateMedicine(/** @type { string } */ uuid,
+                         /** @type {{ name: string, 
+                          *           description: string, 
+                          *           side_effects: string,
+                          *           total_daily_dosage: number
+                                   }} */
+                          currentMedicine) {
+      const apiResponse = await http.put(`/medicines/${uuid}`, currentMedicine);
+      let medicinesState = this.medicines.filter((medicine) => medicine.uuid !== uuid);
       medicinesState.push(apiResponse.data);
       this.medicines = medicinesState;
     },
-    /*
-    async removePlayer(id) {
-      await http.delete(`/players/${id}`);
-      this.players = this.players.filter((player) => player.id !== id);
-    },
-    */
+    
+    async removeMedicine(/** @type { string } */ uuid) {
+      await http.delete(`/medicines/${uuid}`);
+      this.medicines = this.medicines.filter((medicine) => medicine.uuid !== uuid);
+    }
   },
 });

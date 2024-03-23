@@ -114,11 +114,10 @@
     };
 
     if (result) {
-      request.medicine = state.medicine;
-      request.message = state.message;
+      request.medicine          = state.medicine;
+      request.message           = state.message;
       request.notification_time = state.notification_time.toLocaleString();
 
-      
       if (reminderId !== "") {
         await remindersStore.updateReminder(reminderId, request);
         reminderId = "";

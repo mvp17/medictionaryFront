@@ -1,15 +1,25 @@
 import { defineStore } from 'pinia';
 import http from "../../../http-common";
+import { useUserStore } from '@/modules/users/stores/userStore';
 
 export const useAlarmsStore = defineStore('alarms', {
   state: () => ({
-    /** @type {{ id: number, name: string, time_taking_pill: string, total_daily_amount: number, treatment_length: number, hour_per_dosage: number, last_day_taking_pill: number, status: string }[]} */
+    /** @type {{ uuid: number, 
+                 name: string, 
+                 time_taking_pill: string, 
+                 total_daily_amount: number, 
+                 treatment_length: number, 
+                 hour_per_dosage: number, 
+                 last_day_taking_pill: number, 
+                 status: string }[]} 
+    */
     alarms: [],
   }),
   getters: {
     getAll: async (state) => {
       http.interceptors.request.use(async (request) => {
-        const token = useUserStore.getUser.token;
+        const userStore = useUserStore();
+        const token = userStore.getUser.token;
         if (token !== "") request.headers.Authorization = `Bearer ${token}`;
         return request;
       });
@@ -17,25 +27,41 @@ export const useAlarmsStore = defineStore('alarms', {
       state.alarms = apiResponse.data;
     },
     getById: (state) => {
-      return (id) => state.alarms.find((alarm) => alarm.id === id);
+      return (uuid) => state.alarms.find((alarm) => alarm.uuid === uuid);
     },
   },
   actions: {
-    async addAlarm(newAlarm) {
-      const apiResponse = await http.post("/createAlarm", newAlarm);
+    async addAlarm(/** @type {{ name: String, 
+                                time_taking_pill: String, 
+                                total_daily_amount: Number, 
+                                treatment_length: Number, 
+                                hour_per_dosage: Number, 
+                                last_day_taking_pill: Number, 
+                                status: String
+                             }} */
+                      newAlarm) {
+      const apiResponse = await http.post("/alarms", newAlarm);
       this.alarms = [...this.alarms, apiResponse.data];
     },
-    async updateAlarm(id, currentAlarm) {
-      const apiResponse = await http.put(`/updateAlarm/${id}`, currentAlarm);
-      let alarmsState = this.alarms.filter((alarm) => alarm.id !== id);
+    async updateAlarm(/** @type { string } */ uuid, 
+                      /** @type {{ name: String, 
+                                   time_taking_pill: String, 
+                                   total_daily_amount: Number, 
+                                   treatment_length: Number, 
+                                   hour_per_dosage: Number, 
+                                   last_day_taking_pill: Number, 
+                                   status: String
+                                }} */
+                        currentAlarm) {
+      const apiResponse = await http.put(`/alarms/${uuid}`, currentAlarm);
+      let alarmsState = this.alarms.filter((alarm) => alarm.uuid !== uuid);
       alarmsState.push(apiResponse.data);
       this.alarms = alarmsState;
     },
-    /*
-    async removePlayer(id) {
-      await http.delete(`/players/${id}`);
-      this.players = this.players.filter((player) => player.id !== id);
+    
+    async removeAlarm(/** @type { string } */ uuid) {
+      await http.delete(`/alarms/${uuid}`);
+      this.alarms = this.alarms.filter((alarm) => alarm.uuid !== uuid);
     },
-    */
   },
 });

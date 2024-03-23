@@ -19,16 +19,24 @@ export const useRemindersStore = defineStore('reminders', {
       state.reminders = apiResponse.data;
     },
     getById: (state) => {
-      return (id) => state.reminders.find((reminder) => reminder.id === id);
+      return (uuid) => state.reminders.find((reminder) => reminder.uuid === uuid);
     },
   },
   actions: {
-    async addReminder(/** @type {{ medicine: string, message: string, notification_time: string }} */ newReminder) {
+    async addReminder(/** @type {{ medicine: string, 
+                                   message: string, 
+                                   notification_time: string 
+                                }} */
+                        newReminder) {
       const apiResponse = await http.post("/reminders", newReminder);
       this.reminders = [...this.reminders, apiResponse.data];
     },
-    async updateReminder(/** @type { string } */ uuid, 
-                         /** @type {{ medicine: string, message: string, notification_time: string }} */ currentReminder) {
+    async updateReminder(/** @type { string } */ uuid,
+                         /** @type {{ medicine: string, 
+                                      message: string, 
+                                      notification_time: string 
+                                    }} */
+                            currentReminder) {
       const apiResponse = await http.put(`/reminders/${uuid}`, currentReminder);
       let remindersState = this.reminders.filter((reminder) => reminder.uuid !== uuid);
       remindersState.push(apiResponse.data);
@@ -39,6 +47,5 @@ export const useRemindersStore = defineStore('reminders', {
       await http.delete(`/reminders/${uuid}`);
       this.reminders = this.reminders.filter((reminder) => reminder.uuid !== uuid);
     },
-    
   },
 });

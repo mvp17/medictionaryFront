@@ -20,9 +20,22 @@ export const routes = [
     },
     {
       path: "/search-medicine",
-      name: "Search medicine",
+      name: "Search",
       icon: "mdi-magnify",
       component: () => import("../../modules/medicines/views/SearchMedicine.vue"),
+      beforeEnter: [authGuard]
+    },
+    {
+      path: "/detailed-medicine",
+      name: "Detail medicine",
+      component: () => import("../../modules/medicines/views/DetailedMedicine.vue"),
+      beforeEnter: [authGuard]
+    },
+    {
+      path: "/medicines",
+      name: "Medicines",
+      icon: "mdi-pill",
+      component: () => import("../../modules/medicines/views/Medicines.vue"),
       beforeEnter: [authGuard]
     },
     {
@@ -37,12 +50,6 @@ export const routes = [
       name: "Reminders",
       icon: "mdi-reminder",
       component: () => import("../../modules/reminders/views/Reminders.vue"),
-      beforeEnter: [authGuard]
-    },
-    {
-      path: "/detailed-medicine",
-      name: "Detail medicine",
-      component: () => import("../../modules/medicines/views/DetailedMedicine.vue"),
       beforeEnter: [authGuard]
     },
 ];
