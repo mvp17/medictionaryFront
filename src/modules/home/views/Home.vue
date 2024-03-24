@@ -1,25 +1,29 @@
 <template>
   <h1>Home</h1>
   <form>
-    <v-text-field
+    <v-select
       v-model="state.smoker"
+      :items="smokingLevels"
       :error-messages="v$.smoker.$errors.map((e) => e.$message)"
-      :counter="10"
-      label="Smoker"
+      label="Are you a smoker?"
+      item-title="level"
+      item-value="value"
       required
-      @input="v$.smoker.$touch"
+      @change="v$.smoker.$touch"
       @blur="v$.smoker.$touch"
-    ></v-text-field>
+    ></v-select>
 
-    <v-text-field
+    <v-select
       v-model="state.drinker"
+      :items="drinkingLevels"
       :error-messages="v$.drinker.$errors.map((e) => e.$message)"
-      :counter="10"
-      label="Drinker"
+      label="Are you a drinker?"
+      item-title="level"
+      item-value="value"
       required
-      @input="v$.drinker.$touch"
+      @change="v$.drinker.$touch"
       @blur="v$.drinker.$touch"
-    ></v-text-field>
+    ></v-select>
 
     <v-text-field
       v-model="state.breakfast"
@@ -80,11 +84,31 @@
 <script setup>
   import { reactive } from "vue";
   import { useVuelidate } from "@vuelidate/core";
-  import { required } from "@vuelidate/validators";
+  import { required, numeric } from "@vuelidate/validators";
+  import { useSurveyStore } from "../stores/survey";
+  import { mustBeGreaterThan0 } from "@/core/utils/functions";
+
+  const surveyStore = useSurveyStore();
+  const survey = computed(() => surveyStore.survey);
+
+  const smokingLevels = [
+    { level: "None",         value: 1 },
+    { level: "Occasionally", value: 2 },
+    { level: "Usually",      value: 3 },
+    { level: "Compulsively", value: 4 }
+  ];
+
+  const drinkingLevels = [
+    { level: "None",                value: 1 },
+    { level: "Rarely",              value: 2 },
+    { level: "In meals",            value: 3 },
+    { level: "In my leisure times", value: 4 },
+    { level: "Compulsively",        value: 5 }
+  ];
 
   const initialState = {
-    smoker: "",
-    drinker: "",
+    smoker: 0,
+    drinker: 0,
     breakfast: "",
     lunch: "",
     coldMd: "",
@@ -97,8 +121,8 @@
   });
 
   const rules = {
-    smoker:     { required },
-    drinker:    { required },
+    smoker:     { required, numeric, mustBeGreaterThan0 },
+    drinker:    { required, numeric, mustBeGreaterThan0 },
     breakfast:  { required },
     lunch:      { required },
     coldMd:     { required },
@@ -108,11 +132,15 @@
 
   const v$ = useVuelidate(rules, state);
 
+  onMounted(async () => {
+    await surveyStore.getAll;
+  });
+
   async function submit() {
     const result = await v$.value.$validate();
     const request = { 
-      smoker: "", 
-      drinker: "", 
+      smoker: 0, 
+      drinker: 0, 
       breakfast: "", 
       lunch: "", 
       coldMd: "", 

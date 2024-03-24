@@ -5,7 +5,7 @@ export const routes = [
       path: "/",
       name: "Home",
       icon: "mdi-home",
-      component: () => import("../../modules/home/Home.vue"),
+      component: () => import("../../modules/home/views/Home.vue"),
       beforeEnter: [authGuard]
     },
     {

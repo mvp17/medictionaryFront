@@ -120,7 +120,8 @@
   import { computed, reactive } from "@vue/reactivity";
   import { useVuelidate } from "@vuelidate/core";
   import { onMounted } from "vue";
-  import { required } from "@vuelidate/validators";
+  import { required, numeric } from "@vuelidate/validators";
+  import { mustBeGreaterThan0 } from "@/core/utils/functions";
 
   const alarmsStore = useAlarmsStore();
   const alarms = computed(() => alarmsStore.alarms);
@@ -138,10 +139,10 @@
   const rules = {
     name:                 { required },
     time_taking_pill:     { required },
-    total_daily_amount:   { required },
-    treatment_length:     { required },
-    hour_per_dosage:      { required },
-    last_day_taking_pill: { required },
+    total_daily_amount:   { required, numeric, mustBeGreaterThan0 },
+    treatment_length:     { required, numeric, mustBeGreaterThan0 },
+    hour_per_dosage:      { required, numeric, mustBeGreaterThan0 },
+    last_day_taking_pill: { required, numeric, mustBeGreaterThan0 },
     status:               { required }
   };
 

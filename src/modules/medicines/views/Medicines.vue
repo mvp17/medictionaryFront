@@ -82,6 +82,7 @@
     import { useVuelidate } from "@vuelidate/core";
     import { onMounted } from "vue";
     import { required } from "@vuelidate/validators";
+    import { mustBeGreaterThan0 } from "@/core/utils/functions";
   
     const medicinesStore = useMedicinesStore();
     const medicines = computed(() => medicinesStore.medicines);
@@ -97,7 +98,7 @@
       name:               { required },
       description:        { required },
       side_effects:       { required },
-      total_daily_dosage: { required },
+      total_daily_dosage: { required, numeric, mustBeGreaterThan0 },
     };
   
     const state = reactive({
