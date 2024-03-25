@@ -81,7 +81,7 @@
     import { computed, reactive } from "@vue/reactivity";
     import { useVuelidate } from "@vuelidate/core";
     import { onMounted } from "vue";
-    import { required } from "@vuelidate/validators";
+    import { required, numeric } from "@vuelidate/validators";
     import { mustBeGreaterThan0 } from "@/core/utils/functions";
   
     const medicinesStore = useMedicinesStore();

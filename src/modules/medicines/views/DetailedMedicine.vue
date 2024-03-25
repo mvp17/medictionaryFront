@@ -7,9 +7,9 @@
       cover
     ></v-img>
 
-    <v-card-title> Top western road trips </v-card-title>
+    <v-card-title> Detailed Medicine </v-card-title>
 
-    <v-card-subtitle> Medicine {{ detailedMedicineId }} </v-card-subtitle>
+    <v-card-subtitle> Medicine {{ medicine.name }} </v-card-subtitle>
 
     <v-card-actions>
       <v-dialog v-model="dialog" persistent width="1024">
@@ -143,9 +143,18 @@ export default {
 <script setup>
   import { useRoute } from "vue-router";
   import { useMedicinesStore } from "../stores/medicines";
+  import { computed } from "@vue/reactivity";
+  import { onMounted, toRaw } from "vue";
+
+  const currentRoute = useRoute();
+  const medicineUuid = currentRoute.query.medicineUuid;
 
   const medicinesStore = useMedicinesStore();
+  const medicine = computed(() => toRaw(medicinesStore.medicine));
+
+  onMounted(() => {
+    medicinesStore.getById(medicineUuid);
+  });
   
-  const currentRoute = useRoute();
-  const detailedMedicineId = currentRoute.query.medicineId;
+  
 </script>

@@ -4,13 +4,20 @@ import { useUserStore } from '@/modules/users/stores/userStore';
 
 export const useMedicinesStore = defineStore('medicines', {
   state: () => ({
-    /** @type {{ uuid: number, 
+    /** @type {{ uuid: string, 
      *           name: string, 
      *           description: string, 
      *           sideEffects: string, 
      *           totalDailyDosage: number }[]} 
     */
     medicines: [],
+    medicine: {
+      uuid: "",
+      name: "",
+      description: "",
+      sideEffects: "",
+      totalDailyDosage: ""
+    }
   }),
   getters: {
     getAll: async (state) => {
@@ -22,12 +29,14 @@ export const useMedicinesStore = defineStore('medicines', {
       });
       const apiResponse = await http.get("/medicines");
       state.medicines = apiResponse.data;
-    },
-    getById: (state) => {
-      return (uuid) => state.medicines.find((medicine) => medicine.uuid === uuid);
-    },
+    }
   },
   actions: {
+    async getById(/** @type { string } */ uuid) {
+      const apiResponse = await http.get(`/medicines/${uuid}`);
+      this.medicine = apiResponse.data;
+    },
+
     async addMedicine(/** @type {{ name: string, 
                                    description: string, 
                                    side_effects: string,

@@ -82,11 +82,12 @@
 
 
 <script setup>
-  import { reactive } from "vue";
+  import { reactive, computed } from "vue";
   import { useVuelidate } from "@vuelidate/core";
   import { required, numeric } from "@vuelidate/validators";
   import { useSurveyStore } from "../stores/survey";
   import { mustBeGreaterThan0 } from "@/core/utils/functions";
+  import { onMounted } from "vue";
 
   const surveyStore = useSurveyStore();
   const survey = computed(() => surveyStore.survey);

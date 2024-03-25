@@ -4,10 +4,10 @@
     <input type="text" v-model="input" placeholder="Search..." />
     <div
       class="item medicine"
-      v-for="medicine in filteredList()"
-      :key="medicine"
+      v-for="medicine in filteredMedicines"
+      :key="medicine.name"
     >
-      <p @click="detail(medicine.id)">
+      <p @click="detail(medicine.uuid)">
         <v-img
           src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
           height="200px"
@@ -19,52 +19,38 @@
         ></v-tooltip>
       </p>
     </div>
-    <div class="item error" v-if="input && !filteredList().length">
+    <div class="item error" v-if="input && !filteredMedicines.length">
       <p>No results found!</p>
     </div>
   </v-container>
 </template>
 
-<script>
-  export default {
-    inheritAttrs: false,
-  };
-</script>
 
 <script setup>
   import { useRouter } from "vue-router";
-  import { ref } from "vue";
+  import { ref, toRaw, onMounted } from "vue";
+  import { computed } from "@vue/reactivity";
   import { useMedicinesStore } from "../stores/medicines";
 
   const medicinesStore = useMedicinesStore();
+  const medicines = computed(() => toRaw(medicinesStore.medicines));
 
   let input = ref("");
   const router = useRouter();
-  const medicines = [
-    { id: 0, name: "abc" },
-    {
-      id: 1,
-      name: "def",
-    },
-    {
-      id: 2,
-      name: "ghi",
-    },
-    {
-      id: 3,
-      name: "gtha",
-    },
-  ];
 
-  function filteredList() {
+  onMounted(async () => {
+    await medicinesStore.getAll;
+  });
+
+  const filteredMedicines = computed(() => {
     if (input.value)
-      return medicines.filter((medicine) =>
+      return medicines.value.filter(medicine =>
         medicine.name.toLowerCase().includes(input.value.toLowerCase())
       );
-  }
+  });
 
-  function detail(id) {
-    router.push({ path: "/detailed-medicine", query: { medicineId: id } });
+  function detail(/** @type { string } */ uuid) {
+    router.push({ path: "/detailed-medicine", query: { medicineUuid: uuid } });
   }
 </script>
 
