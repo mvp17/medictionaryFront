@@ -7,16 +7,18 @@ export const useMedicinesStore = defineStore('medicines', {
     /** @type {{ uuid: string, 
      *           name: string, 
      *           description: string, 
-     *           sideEffects: string, 
-     *           totalDailyDosage: number }[]} 
+     *           side_effects: string, 
+     *           total_daily_dosage: number
+     *           directions_of_use: string }[]} 
     */
     medicines: [],
     medicine: {
       uuid: "",
       name: "",
       description: "",
-      sideEffects: "",
-      totalDailyDosage: ""
+      side_effects: "",
+      total_daily_dosage: "",
+      directions_of_use: ""
     }
   }),
   getters: {
@@ -41,6 +43,7 @@ export const useMedicinesStore = defineStore('medicines', {
                                    description: string, 
                                    side_effects: string,
                                    total_daily_dosage: number
+                                   directions_of_use: string
                                 }} */
                               newMedicine) {
       const apiResponse = await http.post("/medicines", newMedicine);
@@ -51,6 +54,7 @@ export const useMedicinesStore = defineStore('medicines', {
                           *           description: string, 
                           *           side_effects: string,
                           *           total_daily_dosage: number
+                          *           directions_of_use: string
                                    }} */
                           currentMedicine) {
       const apiResponse = await http.put(`/medicines/${uuid}`, currentMedicine);

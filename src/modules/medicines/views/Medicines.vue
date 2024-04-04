@@ -4,45 +4,56 @@
         <v-col>
         <form>
             <v-text-field
-                v-model="state.name"
-                :error-messages="v$.name.$errors.map((e) => e.$message)"
-                :counter="10"
-                label="Name"
-                required
-                @input="v$.name.$touch"
-                @blur="v$.name.$touch"
+              v-model="state.name"
+              :error-messages="v$.name.$errors.map((e) => e.$message)"
+              :counter="10"
+              label="Name"
+              required
+              @input="v$.name.$touch"
+              @blur="v$.name.$touch"
             ></v-text-field>
 
             <v-text-field
-                v-model="state.description"
-                :error-messages="v$.description.$errors.map((e) => e.$message)"
-                :counter="10"
-                label="Description"
-                required
-                @input="v$.description.$touch"
-                @blur="v$.description.$touch"
+              v-model="state.description"
+              :error-messages="v$.description.$errors.map((e) => e.$message)"
+              :counter="10"
+              label="Description"
+              required
+              @input="v$.description.$touch"
+              @blur="v$.description.$touch"
             ></v-text-field>
 
             <v-text-field
-                v-model="state.side_effects"
-                :error-messages="v$.side_effects.$errors.map((e) => e.$message)"
-                :counter="10"
-                label="Side effects"
-                required
-                @input="v$.side_effects.$touch"
-                @blur="v$.side_effects.$touch"
+              v-model="state.side_effects"
+              :error-messages="v$.side_effects.$errors.map((e) => e.$message)"
+              :counter="10"
+              label="Side effects"
+              required
+              @input="v$.side_effects.$touch"
+              @blur="v$.side_effects.$touch"
             ></v-text-field>
 
             <v-text-field
-                v-model.number="state.total_daily_dosage"
-                :error-messages="v$.total_daily_dosage.$errors.map((e) => e.$message)"
-                :counter="10"
-                label="Total daily dosage"
-                required
-                type="number"
-                @input="v$.total_daily_dosage.$touch"
-                @blur="v$.total_daily_dosage.$touch"
+              v-model.number="state.total_daily_dosage"
+              :error-messages="v$.total_daily_dosage.$errors.map((e) => e.$message)"
+              :counter="10"
+              label="Total daily dosage"
+              required
+              type="number"
+              @input="v$.total_daily_dosage.$touch"
+              @blur="v$.total_daily_dosage.$touch"
             ></v-text-field>
+
+            <v-textarea 
+              v-model="state.directions_of_use"
+              :error-messages="v$.directions_of_use.$errors.map((e) => e.$message)"
+              :counter="10"
+              label="Directions of use" 
+              variant="outlined"
+              required
+              @input="v$.directions_of_use.$touch"
+              @blur="v$.directions_of_use.$touch"
+            ></v-textarea>
 
             <v-btn color="success" class="me-4" @click="submit"> submit </v-btn>
             <v-btn color="error" @click="clear"> clear </v-btn>
@@ -91,7 +102,8 @@
       name: "",
       description: "",
       side_effects: "",
-      total_daily_dosage: 0
+      total_daily_dosage: 0,
+      directions_of_use: ""
     };
   
     const rules = {
@@ -99,6 +111,7 @@
       description:        { required },
       side_effects:       { required },
       total_daily_dosage: { required, numeric, mustBeGreaterThan0 },
+      directions_of_use:  { required }
     };
   
     const state = reactive({
@@ -118,7 +131,8 @@
         name: "",
         description: "",
         side_effects: "",
-        total_daily_dosage: 0
+        total_daily_dosage: 0,
+        directions_of_use: ""
       }
   
       if (result) {
@@ -126,6 +140,7 @@
         request.description        = state.description;
         request.side_effects       = state.side_effects;
         request.total_daily_dosage = state.total_daily_dosage;
+        request.directions_of_use  = state.directions_of_use;
   
         if (medicineId !== "") {
           await medicinesStore.updateMedicine(medicineId, request);
@@ -145,12 +160,14 @@
                                              description: string, 
                                              side_effects: string,
                                              total_daily_dosage: number
+                                             directions_of_use: string
                                           }} */ 
                                         medicine) {
       state.name               = medicine.name;
       state.description        = medicine.description;
       state.side_effects       = medicine.side_effects;
       state.total_daily_dosage = medicine.total_daily_dosage;
+      state.directions_of_use  = medicine.directions_of_use;
       medicineId               = medicine.uuid;
     }
   
@@ -164,5 +181,6 @@
       state.description        = "";
       state.side_effects       = "";
       state.total_daily_dosage = 0;
+      state.directions_of_use  = "";
     }
 </script>
