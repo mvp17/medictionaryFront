@@ -7,9 +7,9 @@
       cover
     ></v-img>
 
-    <v-card-title> Detailed Medicine </v-card-title>
+    <v-card-title> Detailed {{ medicine.name }} </v-card-title>
 
-    <v-card-subtitle> Medicine {{ medicine.name }} </v-card-subtitle>
+    <v-card-subtitle> Directions of use below  </v-card-subtitle>
 
     <v-card-actions>
       <v-dialog v-model="dialog" persistent width="1024">
@@ -20,7 +20,7 @@
         </template>
         <v-card>
           <v-card-title>
-            <span class="text-h5">Setting alarm for this medicine</span>
+            <span class="text-h5">Setting alarm for {{ medicine.name }}</span>
           </v-card-title>
           <v-card-text>
             <v-container>
@@ -128,7 +128,7 @@
                 -->
               </v-row>
             </v-container>
-            <small>*indicates required field</small>
+            <small>*Indicates required field</small>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -223,6 +223,7 @@ export default {
     const result = await v$.value.$validate();
     const request = {
       name: "",
+      medicine_uuid: "",
       time_taking_pill: "",
       total_daily_amount: 0,
       treatment_length: 0,
@@ -233,6 +234,7 @@ export default {
 
     if (result) {
       request.name                 = state.name;
+      request.medicine_uuid        = medicineUuid;
       request.time_taking_pill     = state.time_taking_pill;
       request.total_daily_amount   = state.total_daily_amount;
       request.treatment_length     = state.treatment_length;

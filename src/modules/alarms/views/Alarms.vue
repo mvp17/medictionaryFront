@@ -13,6 +13,19 @@
           @blur="v$.name.$touch"
         ></v-text-field>
 
+        <v-select
+            v-model="state.medicine_uuid"
+            :items="medicines"
+            :error-messages="v$.medicine_uuid.$errors.map((e) => e.$message)"
+            label="Medicine"
+            required
+            item-title="name"
+            item-value="uuid"
+            @change="v$.medicine_uuid.$touch"
+            @blur="v$.medicine_uuid.$touch"
+            variant="outlined"
+          ></v-select>
+
         <v-text-field
           v-model="state.time_taking_pill"
           :error-messages="v$.time_taking_pill.$errors.map((e) => e.$message)"
@@ -122,12 +135,16 @@
   import { onMounted } from "vue";
   import { required, numeric } from "@vuelidate/validators";
   import { mustBeGreaterThan0 } from "@/core/utils/functions";
+  import { useMedicinesStore } from "@/modules/medicines/stores/medicines";
 
   const alarmsStore = useAlarmsStore();
   const alarms = computed(() => alarmsStore.alarms);
+  const medicinesStore = useMedicinesStore();
+  const medicines = computed(() => medicinesStore.medicines);
 
   const initialState = {
     name: "",
+    medicine_uuid: "",
     time_taking_pill: "",
     total_daily_amount: 0,
     treatment_length: 0,
@@ -138,6 +155,7 @@
 
   const rules = {
     name:                 { required },
+    medicine_uuid:        { required },
     time_taking_pill:     { required },
     total_daily_amount:   { required, numeric, mustBeGreaterThan0 },
     treatment_length:     { required, numeric, mustBeGreaterThan0 },
@@ -155,12 +173,14 @@
 
   onMounted(async () => {
     await alarmsStore.getAll;
+    await medicinesStore.getAll;
   });
 
   async function submit() {
     const result = await v$.value.$validate();
     const request = {
       name: "",
+      medicine_uuid: "",
       time_taking_pill: "",
       total_daily_amount: 0,
       treatment_length: 0,
@@ -171,6 +191,7 @@
 
     if (result) {
       request.name                 = state.name;
+      request.medicine_uuid        = state.medicine_uuid;
       request.time_taking_pill     = state.time_taking_pill;
       request.total_daily_amount   = state.total_daily_amount;
       request.treatment_length     = state.treatment_length;
@@ -192,7 +213,8 @@
   }
 
   async function editAlarm(/** @type {{ uuid: string, 
-                                        name: string, 
+                                        name: string,
+                                        medicine_uuid: string,
                                         time_taking_pill: string, 
                                         total_daily_amount: number,
                                         treatment_length: number,
@@ -202,6 +224,7 @@
                                      }} */ 
                                      alarm) {
     state.name                 = alarm.name;
+    state.medicine_uuid        = alarm.medicine_uuid;
     state.time_taking_pill     = alarm.time_taking_pill;
     state.total_daily_amount   = alarm.total_daily_amount;
     state.treatment_length     = alarm.treatment_length;
@@ -218,6 +241,7 @@
   function clear() {
     v$.value.$reset();
     state.name                 = "";
+    state.medicine_uuid        = "";
     state.time_taking_pill     = "";
     state.total_daily_amount   = "";
     state.treatment_length     = "";
