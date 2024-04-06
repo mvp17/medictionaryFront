@@ -1,84 +1,105 @@
 <template>
-  <h1>Home</h1>
-  <form>
-    <v-select
-      v-model="state.smoker"
-      :items="smokingLevels"
-      :error-messages="v$.smoker.$errors.map((e) => e.$message)"
-      label="Are you a smoker?"
-      item-title="level"
-      item-value="value"
-      required
-      @change="v$.smoker.$touch"
-      @blur="v$.smoker.$touch"
-    ></v-select>
+  <div id="app">
+    <div class="form-container">
+      <h1>Survey</h1>
+      <form>
+        <v-select
+          v-model="state.smoker"
+          :items="smokingLevels"
+          :error-messages="v$.smoker.$errors.map((e) => e.$message)"
+          label="Are you a smoker?"
+          item-title="level"
+          item-value="value"
+          required
+          @change="v$.smoker.$touch"
+          @blur="v$.smoker.$touch"
+        ></v-select>
 
-    <v-select
-      v-model="state.drinker"
-      :items="drinkingLevels"
-      :error-messages="v$.drinker.$errors.map((e) => e.$message)"
-      label="Are you a drinker?"
-      item-title="level"
-      item-value="value"
-      required
-      @change="v$.drinker.$touch"
-      @blur="v$.drinker.$touch"
-    ></v-select>
+        <v-select
+          v-model="state.drinker"
+          :items="drinkingLevels"
+          :error-messages="v$.drinker.$errors.map((e) => e.$message)"
+          label="Are you a drinker?"
+          item-title="level"
+          item-value="value"
+          required
+          @change="v$.drinker.$touch"
+          @blur="v$.drinker.$touch"
+        ></v-select>
 
-    <v-text-field
-      v-model="state.breakfast"
-      :error-messages="v$.breakfast.$errors.map((e) => e.$message)"
-      :counter="10"
-      label="Breakfast"
-      required
-      @input="v$.breakfast.$touch"
-      @blur="v$.breakfast.$touch"
-    ></v-text-field>
+        <v-text-field
+          v-model="state.breakfast"
+          :error-messages="v$.breakfast.$errors.map((e) => e.$message)"
+          :counter="10"
+          label="Breakfast"
+          required
+          @input="v$.breakfast.$touch"
+          @blur="v$.breakfast.$touch"
+        ></v-text-field>
 
-    <v-text-field
-      v-model="state.lunch"
-      :error-messages="v$.lunch.$errors.map((e) => e.$message)"
-      :counter="10"
-      label="Lunch"
-      required
-      @input="v$.lunch.$touch"
-      @blur="v$.lunch.$touch"
-    ></v-text-field>
+        <v-text-field
+          v-model="state.lunch"
+          :error-messages="v$.lunch.$errors.map((e) => e.$message)"
+          :counter="10"
+          label="Lunch"
+          required
+          @input="v$.lunch.$touch"
+          @blur="v$.lunch.$touch"
+        ></v-text-field>
 
-    <v-text-field
-      v-model="state.coldMd"
-      :error-messages="v$.coldMd.$errors.map((e) => e.$message)"
-      :counter="10"
-      label="Cold MD"
-      required
-      @input="v$.coldMd.$touch"
-      @blur="v$.coldMd.$touch"
-    ></v-text-field>
+        <v-text-field
+          v-model="state.coldMd"
+          :error-messages="v$.coldMd.$errors.map((e) => e.$message)"
+          :counter="10"
+          label="Cold MD"
+          required
+          @input="v$.coldMd.$touch"
+          @blur="v$.coldMd.$touch"
+        ></v-text-field>
 
-    <v-text-field
-      v-model="state.prescribed"
-      :error-messages="v$.prescribed.$errors.map((e) => e.$message)"
-      :counter="10"
-      label="Prescribed"
-      required
-      @input="v$.prescribed.$touch"
-      @blur="v$.prescribed.$touch"
-    ></v-text-field>
+        <v-text-field
+          v-model="state.prescribed"
+          :error-messages="v$.prescribed.$errors.map((e) => e.$message)"
+          :counter="10"
+          label="Prescribed"
+          required
+          @input="v$.prescribed.$touch"
+          @blur="v$.prescribed.$touch"
+        ></v-text-field>
 
-    <v-text-field
-      v-model="state.allergy"
-      :error-messages="v$.allergy.$errors.map((e) => e.$message)"
-      :counter="10"
-      label="Allergy"
-      required
-      @input="v$.allergy.$touch"
-      @blur="v$.allergy.$touch"
-    ></v-text-field>
+        <v-text-field
+          v-model="state.allergy"
+          :error-messages="v$.allergy.$errors.map((e) => e.$message)"
+          :counter="10"
+          label="Allergy"
+          required
+          @input="v$.allergy.$touch"
+          @blur="v$.allergy.$touch"
+        ></v-text-field>
 
-    <v-btn color="success" class="me-4" @click="submit"> submit </v-btn>
-    <v-btn color="error" @click="clear"> clear </v-btn>
-  </form>
+        <v-btn color="success" class="me-4" v-if="!isEditing" @click="submit"> submit </v-btn>
+        <v-btn color="success" class="me-4" v-if="isEditing" @click="edit"> edit </v-btn>
+      </form>
+    </div>
+  </div>
 </template>
+
+
+<style>
+  #app {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  .form-container {
+    width: 400px; /* Adjust the width as needed */
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+</style>
 
 
 <script setup>
@@ -133,8 +154,20 @@
 
   const v$ = useVuelidate(rules, state);
 
+  let isEditing = false;
+
   onMounted(async () => {
-    await surveyStore.getAll;
+    await surveyStore.getSurvey;
+    if (survey.value) {
+      isEditing        = true;
+      state.allergy    = survey.value.allergy;
+      state.breakfast  = survey.value.breakfast;
+      state.coldMd     = survey.value.coldMd;
+      state.drinker    = survey.value.drinker;
+      state.lunch      = survey.value.lunch;
+      state.prescribed = survey.value.prescribed;
+      state.smoker     = survey.value.smoker;
+    }
   });
 
   async function submit() {
@@ -158,18 +191,32 @@
       request.prescribed = state.prescribed;
       request.smoker     = state.smoker;
 
-      clear();
+      surveyStore.registerSurvey(request);
     }
   }
 
-  function clear() {
-    v$.value.$reset();
-    state.allergy    = "";
-    state.breakfast  = "";
-    state.coldMd     = "";
-    state.drinker    = "";
-    state.lunch      = "";
-    state.prescribed = "";
-    state.smoker     = "";
+  async function edit() {
+    const result = await v$.value.$validate();
+    const request = { 
+      smoker: 0, 
+      drinker: 0, 
+      breakfast: "", 
+      lunch: "", 
+      cold_md: "", 
+      prescribed: "", 
+      allergy: "" 
+    };
+
+    if (result) {
+      request.allergy    = state.allergy;
+      request.breakfast  = state.breakfast;
+      request.cold_md    = state.coldMd;
+      request.drinker    = state.drinker;
+      request.lunch      = state.lunch;
+      request.prescribed = state.prescribed;
+      request.smoker     = state.smoker;
+
+      surveyStore.updateSurvey(survey.value.uuid, request);
+    }
   }
 </script>
